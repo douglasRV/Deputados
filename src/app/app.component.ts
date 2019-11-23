@@ -31,8 +31,9 @@ export class AppComponent implements OnInit {
     data7.map(d => this.data.push(d));
     this.collectionSize = this.data.length;
     this.dadosFiltro = this.data;
+    this.quantidade = this.dadosFiltro.length;
   }
-  
+
   page = 1;
   pageSize = 30;
   collectionSize = 0;
@@ -43,32 +44,72 @@ export class AppComponent implements OnInit {
   ];
   sexo = "T";
   dadosFiltro: any[] = [];
+  cidade = "";
+  partido = "";
+  quantidade = 0;
 
-  filter(){
+  filter() {
     console.log(this.sexo);
     switch (this.sexo) {
       case "F":
         this.dadosFiltro = this.data
           .filter((f, i) => {
             console.log(this.data);
-            if(f.dadosDeputado.dados.sexo === "F"){
+            if (f.dadosDeputado.dados.sexo === "F") {
               return ({ id: i + 1, ...f })
             }
           })
+        this.quantidade = this.dadosFiltro.length;
         break;
-        case "M":
+      case "M":
         this.dadosFiltro = this.data
           .filter((f, i) => {
-            if(f.dadosDeputado.dados.sexo === "M"){
+            if (f.dadosDeputado.dados.sexo === "M") {
               return ({ id: i + 1, ...f })
             }
           })
-          break;
+        this.quantidade = this.dadosFiltro.length;
+        break;
       default:
-          this.dadosFiltro = this.data
+        this.dadosFiltro = this.data
           .map((f, i) => ({ id: i + 1, ...f }))
           .slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize);
+        this.quantidade = this.dadosFiltro.length;
         break;
+    }
+  }
+  pesquisaCidade() {
+    if (this.cidade === "") {
+      this.dadosFiltro = this.data
+        .map((f, i) => ({ id: i + 1, ...f }))
+        .slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize);
+
+      this.quantidade = this.dadosFiltro.length;
+    } else {
+      this.dadosFiltro = this.data
+        .filter((f, i) => {
+          if (f.dadosDeputado.dados.ultimoStatus.siglaUf === this.cidade) {
+            return ({ id: i + 1, ...f })
+          }
+        })
+
+      this.quantidade = this.dadosFiltro.length;
+    }
+  }
+  pesquisaPartido() {
+    if (this.partido === "") {
+      this.dadosFiltro = this.data
+        .map((f, i) => ({ id: i + 1, ...f }))
+        .slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize);
+      this.quantidade = this.dadosFiltro.length;
+    } else {
+      this.dadosFiltro = this.data
+        .filter((f, i) => {
+          if (f.dadosDeputado.dados.ultimoStatus.siglaPartido === this.partido) {
+            return ({ id: i + 1, ...f })
+          }
+        })
+      this.quantidade = this.dadosFiltro.length;
     }
   }
 }
