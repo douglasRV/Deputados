@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { mapToMapExpression } from '@angular/compiler/src/render3/util';
-import { Logs } from 'selenium-webdriver';
-import { AppService } from './app.service'
+import { AppService } from './app.service';
 
 @Component({
   selector: 'app-root',
@@ -10,21 +8,49 @@ import { AppService } from './app.service'
   providers: [AppService]
 })
 export class AppComponent implements OnInit {
-  constructor(private service: AppService) {
-  };
-  private sexos: { name: string, code: string }[] = [
+  constructor(private service: AppService) {}
+
+  sexos: { name: string, code: string }[] = [
     { name: 'Todos', code: 'T' },
     { name: 'Masculino', code: 'M' },
     { name: 'Feminino', code: 'F' },
   ];
-  sexo = "T";
-  cidade = "";
-  partido = "";
+  sexo = 'T';
+  estado = '';
+  partido = '';
   data: any[] = [];
-  ngOnInit() { this.data = this.service.resetaDados() };
-  filter() {
-    this.data = this.service.filter(this.sexo);
+  page = 1;
+  pageSize = 30;
+  collectionSize = 0;
+  filtro: {sexo: string, estado: string, partido: string } = {
+    sexo: this.sexo,
+    estado: this.estado,
+    partido: this.partido
+  };
+  quantidade = 0;
+
+  ngOnInit() {
+
+    const initialData = this.service.resetaDados();
+    this.collectionSize = initialData.length;
+    this.data = initialData;
   }
-  pesquisaCidade() { this.data = this.service.pesquisaCidade(this.cidade); }
-  pesquisaPartido() { this.data = this.service.pesquisaPartido(this.partido); }
+
+  filter() {
+    this.filtro = {
+      sexo: this.sexo,
+      estado: this.estado.toUpperCase(),
+      partido: this.partido.toUpperCase()
+    };
+    this.data = this.service.filtrar(this.filtro);
+    this.quantidade = this.data.length;
+  }
+
+  resetFiltro(){
+    this.data =  this.service.resetaDados();
+  }
+  get dados(){
+    this.quantidade = this.data.length;
+    return this.data.slice((this.page - 1) * this.pageSize, (this.page - 1) * this.pageSize + this.pageSize)
+  }
 }

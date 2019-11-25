@@ -1,0 +1,9 @@
+.img {
+    width: 70px; 
+    height: 70px; 
+    border-radius: 50px;
+}
+.quant-dep{
+    display: flex;
+    justify-content: flex-end;
+}
